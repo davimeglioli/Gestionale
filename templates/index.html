@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestione Preventivi</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Preventivi</div>
+    <div class="search-area">
+      <input id="searchInput" type="text" placeholder="Cerca per Nome e Cognome" autocomplete="off" />
+      <div id="suggestions" class="suggestions"></div>
+    </div>
+    <button id="addBtn" class="add-btn" aria-label="Aggiungi">+</button>
+  </header>
+
+  <main>
+    <section id="cards" class="cards"></section>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Dettagli Preventivo</h2>
+        <button id="closeModal" class="icon-btn">×</button>
+      </div>
+      <form id="quoteForm" class="form-grid"></form>
+      <div class="modal-actions">
+        <button id="cancelModal" class="secondary">Chiudi</button>
+        <button id="saveQuote" class="primary">Salva</button>
+        <button id="deleteQuote" class="danger">Elimina</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confermi l'eliminazione?</h3>
+        <button id="closeConfirm" class="icon-btn">×</button>
+      </div>
+      <div class="modal-actions">
+        <button id="confirmDelete" class="danger">Elimina</button>
+        <button id="cancelDelete" class="secondary">Annulla</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

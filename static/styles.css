@@ -43,6 +43,8 @@ main { padding: 24px; }
 }
 
 .login-body { display: grid; place-items: center; min-height: 100vh; background: var(--bg); }
-.login-card { width: min(380px, 90vw); background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 6px 24px rgba(0,0,0,0.06); }
-.login-brand { font-weight: 600; margin-bottom: 12px; }
+.login-card { width: min(420px, 92vw); background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 6px 24px rgba(0,0,0,0.06); }
 .login-form { display: grid; gap: 12px; }
+.login-form .field { display: grid; gap: 6px; }
+.login-form input { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; outline: none; background: #fff; color: var(--text); }
+.login-card .primary { width: 100%; }

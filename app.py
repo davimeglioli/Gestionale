@@ -1,8 +1,9 @@
-from flask import Flask, jsonify, request, render_template, send_from_directory
+from flask import Flask, jsonify, request, render_template, send_from_directory, redirect, url_for, session
 import sqlite3
 import os
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-key")
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "quotes.db")
 
@@ -135,11 +136,25 @@ def validate_data(data, is_create=False):
 
 @app.route("/")
 def index():
+    if not session.get("auth"):
+        return render_template("login.html", error=None)
     return render_template("index.html")
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    name = request.form.get("name") or (request.get_json(silent=True) or {}).get("name")
+    password = request.form.get("password") or (request.get_json(silent=True) or {}).get("password")
+    if name == "Davide" and password == "Ferrari":
+        session["auth"] = True
+        return redirect(url_for("index"))
+    return render_template("login.html", error="Credenziali non valide"), 401
 
 
 @app.route("/api/quotes", methods=["GET"])
 def list_quotes():
+    if not session.get("auth"):
+        return jsonify({"error": "unauthorized"}), 401
     q = request.args.get("q", "").strip()
     with get_conn() as conn:
         if q:
@@ -180,6 +195,8 @@ def list_quotes():
 
 @app.route("/api/autocomplete", methods=["GET"])
 def autocomplete():
+    if not session.get("auth"):
+        return jsonify([])
     q = request.args.get("q", "").strip()
     suggestions = []
     if q:
@@ -201,6 +218,8 @@ def autocomplete():
 
 @app.route("/api/quote/<int:order_number>", methods=["GET"])
 def get_quote(order_number: int):
+    if not session.get("auth"):
+        return jsonify({"error": "unauthorized"}), 401
     with get_conn() as conn:
         row = conn.execute(
             "SELECT * FROM quotes WHERE order_number = ?",
@@ -213,6 +232,8 @@ def get_quote(order_number: int):
 
 @app.route("/api/quote", methods=["POST"])
 def create_quote():
+    if not session.get("auth"):
+        return jsonify({"error": "unauthorized"}), 401
     data = request.get_json(force=True) or {}
     fields = [
         "customer_first_name",
@@ -253,6 +274,8 @@ def create_quote():
 
 @app.route("/api/quote/<int:order_number>", methods=["PUT"])
 def update_quote(order_number: int):
+    if not session.get("auth"):
+        return jsonify({"error": "unauthorized"}), 401
     data = request.get_json(force=True) or {}
     updatable = [
         "customer_first_name",
@@ -301,6 +324,8 @@ def update_quote(order_number: int):
 
 @app.route("/api/quote/<int:order_number>", methods=["DELETE"])
 def delete_quote(order_number: int):
+    if not session.get("auth"):
+        return jsonify({"error": "unauthorized"}), 401
     with get_conn() as conn:
         cur = conn.execute("DELETE FROM quotes WHERE order_number = ?", (order_number,))
     return jsonify({"deleted": cur.rowcount})

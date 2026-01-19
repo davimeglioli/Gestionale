@@ -1,10 +1,16 @@
 from flask import Flask, jsonify, request, render_template, send_from_directory, redirect, url_for, session
 import sqlite3
 import os
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-key")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-key-change-in-production")
 
+# Database path - use a persistent location
 DB_PATH = os.path.join(os.path.dirname(__file__), "quotes.db")
 
 
@@ -339,4 +345,6 @@ def static_files(filename):
 init_db()
 
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_ENV") == "development"
+    app.run(debug=debug, host="0.0.0.0", port=port)

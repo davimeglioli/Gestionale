@@ -342,9 +342,26 @@ def static_files(filename):
     return send_from_directory(os.path.join(app.root_path, "static"), filename)
 
 
-init_db()
+@app.before_request
+def before_request():
+    """Initialize DB on first request instead of startup"""
+    if not hasattr(app, '_db_initialized'):
+        try:
+            init_db()
+            app._db_initialized = True
+            logger.info("Database initialized successfully")
+        except Exception as e:
+            logger.error(f"Database initialization error: {e}")
+
+
+# Health check endpoint for Render
+@app.route("/health")
+def health():
+    return {"status": "ok"}, 200
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     debug = os.environ.get("FLASK_ENV") == "development"
+    logger.info(f"Starting app on 0.0.0.0:{port} (debug={debug})")
     app.run(debug=debug, host="0.0.0.0", port=port)

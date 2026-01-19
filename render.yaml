@@ -6,8 +6,6 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT --timeout 300 --graceful-timeout 30 --keep-alive 5 --access-logfile - --error-logfile - app:app
     autoDeploy: true
-    healthCheckPath: /health
-    healthCheckInterval: 30
     maxInstances: 2
     envVars:
       - key: FLASK_ENV
